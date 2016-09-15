@@ -1,0 +1,12 @@
+localhost:80 {
+    # viz https://gist.github.com/severak/2600b49caae377a594d7585128495895
+
+    startup fcgiserver start
+    shutdown fcgiserver stop
+
+    fastcgi / localhost:9000 php
+
+    rewrite {
+        to {path} {path} /app_dev.php/{uri}
+    }
+}
