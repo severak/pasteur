@@ -685,7 +685,7 @@ class Sparrow {
                     break;
 
                 case 'pdosqlite':
-                    $this->db = new PDO('sqlite:/'.$db['database']);
+                    $this->db = new PDO('sqlite:'.$db['database']);
                     $db['type'] = 'pdo';
 
                     break; 
