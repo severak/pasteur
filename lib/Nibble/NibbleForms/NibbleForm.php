@@ -229,7 +229,7 @@ class NibbleForm
 
             return false;
         }
-        if ((isset($_SESSION["nibble_forms"]["_crsf_token"], $_SESSION["nibble_forms"]["_crsf_token"][$this->name])
+        /*if ((isset($_SESSION["nibble_forms"]["_crsf_token"], $_SESSION["nibble_forms"]["_crsf_token"][$this->name])
             && $form_data["_crsf_token"] !== $_SESSION["nibble_forms"]["_crsf_token"][$this->name])
             || !isset($_SESSION["nibble_forms"]["_crsf_token"])
             || !isset($form_data["_crsf_token"])
@@ -237,7 +237,7 @@ class NibbleForm
             $this->setMessages('CRSF token invalid', 'CRSF error');
             $this->valid = false;
         }
-        $_SESSION["nibble_forms"]["_crsf_token"] = array();
+        $_SESSION["nibble_forms"]["_crsf_token"] = array();*/
         if ($this->sticky) {
             $this->addData($form_data);
         }
