@@ -1,0 +1,1 @@
+CREATE TABLE "pasteur_paste" ("id" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , "text" TEXT, "name" CHAR);
