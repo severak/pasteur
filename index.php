@@ -38,4 +38,17 @@ Flight::route('/paste/@id', function($id){
 	echo '<pre>' . $paste['text'] . '</pre>';
 });
 
+
+Flight::route('/register', function(){
+	$request = Flight::request();
+
+	$form = new severak\forms\form('/register', 'POST');
+	$form->field('email', 'email', ['label'=>'E-mail']);
+	$form->field('password', 'pasword', ['label'=>'Passwod']);
+
+	// fCore::expose($form);
+
+	return Flight::render('register.php', ['form'=>$form]);
+});
+
 Flight::start();
