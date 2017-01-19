@@ -7,12 +7,18 @@ class form
 	public $method = 'POST';
 	public $values = [];
 	public $fields = [];
+	public $errors = [];
+
 	protected $_rules = [];
+	protected $_id = 'form';
+	protected $_skin;
 
 	public function __construct($action, $method='POST')
 	{
 		$this->action = $action;
 		$this->method = strtoupper($method);
+
+		$this->_skin = new \severak\forms\skins\plain($this);
 	}
 
 	public function field($name, $type='text', $attr=[])
@@ -23,8 +29,8 @@ class form
 
 		$attr['name'] = $name;
 		$attr['type'] = $type;
-
-		// todo generovat id
+		if (!isset($attr['label'])) $attr['label'] = ucfirst($name); 
+		if (empty($attr['id'])) $attr['id'] = $this->_id . '_' . $name;
 
 		$this->fields[$name] = $attr;
 
@@ -33,24 +39,52 @@ class form
 
 	public function rule($name, $callback, $message)
 	{
-		// todo
+		$this->_rules[$name][] = ['check'=>$callback, 'message'=>$message];
 	}
 
 	public function fill($data)
 	{
-		// todo
+		foreach ($this->fields as $name=>$def) {
+			$val = isset($data[$name]) ? $data[$name] : null;
+			$this->values[$name] = $val;
+			$this->fields[$name]['value'] = $val; // todo: opravdu to chceme?
+		}
+		return $this;
+	}
+
+	public function reset()
+	{
+		$this->errors = [];
+		return $this->fill([]);
 	}
 
 	public function validate()
 	{
-		// todo
+		$valid = true;
+		foreach ($this->_rules as $name => $rules) {
+			foreach ($rules as $rule) {
+				$passed = true;
+				if (is_object($rule['check'])) {
+					
+				} else {
+					$passed = call_user_func_array($rule['check'], [$this->values[$name], $this->values]);	
+				}
+				if (empty($passed)) {
+					$this->errors[$name] = $rule['message'];
+					$valid = false;
+					break;
+				}
+			}
+		}
+		return $valid;
 	}
 
 	public function show()
 	{
-		// todo
-		return 'tada';
+		return $this->_skin->show();
 	}
+
+	// shortcuts to skin
 
 	public function showOpen()
 	{

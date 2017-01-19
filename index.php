@@ -44,9 +44,19 @@ Flight::route('/register', function(){
 
 	$form = new severak\forms\form('/register', 'POST');
 	$form->field('email', 'email', ['label'=>'E-mail']);
-	$form->field('password', 'pasword', ['label'=>'Passwod']);
+	$form->field('password', 'password', ['label'=>'Password']);
+	$form->field('password_again', 'password', ['label'=>'again']);
+	$form->field('register', 'submit');
 
-	// fCore::expose($form);
+	$form->rule('password_again', function($_, $all) {
+		return $all['password']==$all['password_again'];
+	}, 'must be repetition of password');
+
+	fCore::expose($form);
+
+	if ($request->method=='POST' && $form->fill($request->data)->validate()) {
+		// register that bastard
+	}
 
 	return Flight::render('register.php', ['form'=>$form]);
 });
