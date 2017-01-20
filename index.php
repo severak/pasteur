@@ -2,6 +2,7 @@
 require 'lib/flight/Flight.php';
 require "lib/flight/autoload.php";
 
+Flight::init();
 Flight::set('flight.handle_errors', false);
 require "lib/tracy/src/tracy.php";
 use \Tracy\Debugger;
