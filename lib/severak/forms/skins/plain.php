@@ -18,7 +18,7 @@ class plain
 			$out .= $key . '="';
 			if ($value===true) {
 				$out .= 'true';
-			} else {
+			} elseif (is_string($value) || is_numeric($value)) {
 				$out .= htmlspecialchars($value, ENT_HTML5);	
 			}
 			$out .= '" ';
@@ -49,9 +49,21 @@ class plain
 		unset($attr['label']);
 
 		if ($def['type']=='select') {
-
+			$options = !empty($attr['options']) ? $attr['options'] : [];
+			$selected = !empty($attr['value']) ? $attr['value'] : [];
+			unset($attr['options'], $attr['value']);
+			
+			$out =  $this->_tag('select', $attr);
+			foreach ($options as $k=>$v) {
+				$out .= $this->_tag('option', ['value'=>$k], false) . htmlspecialchars($v) . '</option>';
+			}
+			$out .= '</select>';
+			return $out;
 		} elseif ($def['type']=='textarea') {
-
+			$value = !empty($attr['value']) ? $attr['value'] : '';
+			unset($attr['type'], $attr['value']);
+			
+			return $this->_tag('textarea', $attr) . htmlspecialchars($value) . '</textarea>';
 		} else {
 			return $this->_tag('input', $attr);
 		}

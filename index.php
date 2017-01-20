@@ -2,13 +2,12 @@
 require 'lib/flight/Flight.php';
 require "lib/flight/autoload.php";
 
-flight\core\Loader::addDirectory("lib/flourish");
-
+Flight::set('flight.handle_errors', false);
 require "lib/tracy/src/tracy.php";
 use \Tracy\Debugger;
 Debugger::enable();
 
-use Nibble\NibbleForms\NibbleForm as form;
+flight\core\Loader::addDirectory("lib/flourish");
 
 Flight::register('db', 'sparrow', [], function($db) {
 	$db->setDb('pdosqlite://localhost/'.__DIR__.'/pasteur.sqlite');
@@ -18,18 +17,26 @@ Flight::register('db', 'sparrow', [], function($db) {
 Flight::route('/', function(){
 	$db = Flight::db();
 	$request = Flight::request();
-
-	$form = form::getInstance('/');
-	$form->addField('text', 'textarea', ['rows'=>30, 'cols'=>80, 'required'=>true, 'label'=>'Your paste']);
-	$form->addField('name', 'text', ['label'=>'Optional title', 'required'=>false]);
 	
-	if ($request->method=='POST' && $form->validate()) {
-		$F = $_POST['nibble_form'];
+	$languages = [
+		'html' => 'HTML',
+		'php' => 'PHP',
+		'lua' => 'lua',
+	];
+
+	$form = new severak\forms\form('/', 'POST');
+	$form->field('text', 'textarea', ['rows'=>10, 'cols'=>80, 'label'=>'Your paste', 'required'=>true]);
+	$form->field('name', 'text', ['label'=>'Optional title']);
+	$form->field('language', 'select', ['options'=>$languages]);
+	$form->field('act_paste', 'submit', ['label'=>'PASTE!']);
+	
+	if ($request->method=='POST' && $form->fill($request->data)->validate()) {
+		$F = $request->data;
 		$db->from('pasteur_paste')->insert(['text'=>$F['text'], 'name'=>$F['name']])->execute();
 		Flight::redirect('/paste/' . $db->insert_id);
 	}
 
-	echo $form->render();
+	return Flight::render('register.php', ['form'=>$form]);
 });
 
 Flight::route('/paste/@id', function($id){

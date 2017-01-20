@@ -34,6 +34,10 @@ class form
 		$attr['name'] = $name;
 		$attr['type'] = $type;
 		if (!isset($attr['label'])) $attr['label'] = ucfirst($name); 
+		
+		if ($type=='submit') $attr['value'] = $attr['label'];
+		
+		// automatic ID
 		if (empty($attr['id'])) $attr['id'] = $this->_id . '_' . $name;
 
 		$this->fields[$name] = $attr;
@@ -52,6 +56,7 @@ class form
 		foreach ($this->fields as $name=>$def) {
 			$val = isset($data[$name]) ? $data[$name] : null;
 			$this->values[$name] = $val;
+			if ($def['type']=='submit') continue; // we dont want to overwrite defaults
 			$this->fields[$name]['value'] = $val; // todo: opravdu to chceme?
 		}
 		return $this;
