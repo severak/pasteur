@@ -8,6 +8,10 @@ class form
 	public $values = [];
 	public $fields = [];
 	public $errors = [];
+	
+	public $defaultMessages = [
+		'required' => 'Field is required.'
+	];
 
 	protected $_rules = [];
 	protected $_id = 'form';
@@ -34,7 +38,8 @@ class form
 
 		$this->fields[$name] = $attr;
 
-		// todo implicitní rule's
+		// implicit rule's
+		if (!empty($attr['required'])) $this->rule($name, new \severak\forms\rules\required(), $this->defaultMessages['required']);
 	}
 
 	public function rule($name, $callback, $message)
@@ -64,8 +69,8 @@ class form
 		foreach ($this->_rules as $name => $rules) {
 			foreach ($rules as $rule) {
 				$passed = true;
-				if (is_object($rule['check'])) {
-					
+				if (is_object($rule['check']) && is_a($rule['check'], '\severak\forms\ruleInterface')) {
+					$passed = $rule['check']->check($this->values[$name], $this->values);
 				} else {
 					$passed = call_user_func_array($rule['check'], [$this->values[$name], $this->values]);	
 				}

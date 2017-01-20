@@ -44,8 +44,8 @@ Flight::route('/register', function(){
 	$request = Flight::request();
 
 	$form = new severak\forms\form('/register', 'POST');
-	$form->field('email', 'email', ['label'=>'E-mail']);
-	$form->field('password', 'password', ['label'=>'Password']);
+	$form->field('email', 'email', ['label'=>'E-mail', 'required'=>true]);
+	$form->field('password', 'password', ['label'=>'Password', 'required'=>true]);
 	$form->field('password_again', 'password', ['label'=>'again']);
 	$form->field('real_name', 'text', ['label'=> 'Real name', 'placeholder'=>'Joe Doe', 'autocomplete'=>'name']);
 	$form->field('register', 'submit');
@@ -54,8 +54,6 @@ Flight::route('/register', function(){
 		return $all['password']==$all['password_again'];
 	}, 'must be repetition of password');
 	
-	$form->rule('email', new \severak\forms\rules\required(), "qq");
-
 	// dump($form);
 
 	if ($request->method=='POST' && $form->fill($request->data)->validate()) {
